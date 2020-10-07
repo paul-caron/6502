@@ -30,6 +30,7 @@ public:
     std::string addressing_mode = "";
     std::string mnemonic ="";
     std::array<uint8_t,64*1024>memory;
+    bool extra_cycle=0;
 
     //flags
     const uint8_t C = 0b00000001;

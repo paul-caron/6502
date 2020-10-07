@@ -24,6 +24,7 @@ static int count = 0;
         P |= U;
     }
     --cycles;
+    extra_cycle=0;
 }
 
 void cpu6502::reset(){
@@ -611,6 +612,8 @@ void cpu6502::absX(){
     address = read(PC++);
     address += read(PC++) << 8;
     address += X;
+    if((address & 0xFF00)!=((address -X) & 0xFF00))
+        extra_cycle = 1;
 }
 
 void cpu6502::absY(){
@@ -618,6 +621,8 @@ void cpu6502::absY(){
     address = read(PC++);
     address += read(PC++) << 8;
     address += Y;
+    if((address & 0xFF00)!=((address - Y)&0xFF00))
+        extra_cycle = 1;
 }
 
 void cpu6502::imm(){
@@ -633,6 +638,8 @@ void cpu6502::indY(){
     address = read(ptr_lo);
     address += read(ptr_hi) << 8;
     address += Y;
+    if((address & 0xFF00)!=((address - Y)&0xFF00))
+        extra_cycle = 1;
 }
 
 void cpu6502::imp(){
@@ -696,6 +703,7 @@ void cpu6502::adc(){
     else if((!(A&0x80))&&(!(read(address)&0x80))&&(result&0x0080)) P |= V;
     else P &= ~V;
     A = result & 0x00FF;
+    cycles += extra_cycle;
 }
 
 void cpu6502::and_(){
@@ -704,6 +712,7 @@ void cpu6502::and_(){
     else P &= ~Z;
     if(A&0x80) P |= N;
     else P &= ~N;
+    cycles += extra_cycle;
 }
 
 void cpu6502::asl(){
@@ -845,6 +854,7 @@ void cpu6502::cmp(){
     else P &= ~Z;
     if(result & 0x0080) P |= N;
     else P &= ~N;
+    cycles += extra_cycle;
 }
 
 void cpu6502::cpx(){
@@ -898,6 +908,7 @@ void cpu6502::eor(){
     else P &= ~Z;
     if(A&0x80) P |= N;
     else P &= ~N;
+    cycles += extra_cycle;
 }
 
 void cpu6502::illegal(){
@@ -946,6 +957,7 @@ void cpu6502::lda(){
     else P &= ~Z;
     if(A&0x80) P |= N;
     else P &= ~N;
+    cycles += extra_cycle;
 }
 
 void cpu6502::ldx(){
@@ -954,6 +966,7 @@ void cpu6502::ldx(){
     else P &= ~Z;
     if(X&0x80) P |= N;
     else P &= ~N;
+    cycles += extra_cycle;
 }
 
 void cpu6502::ldy(){
@@ -962,6 +975,7 @@ void cpu6502::ldy(){
     else P &= ~Z;
     if(Y&0x80) P |= N;
     else P &= ~N;
+    cycles += extra_cycle;
 }
 
 void cpu6502::lsr(){
@@ -989,6 +1003,7 @@ void cpu6502::ora(){
     else P &= ~Z;
     if(A&0x80) P |= N;
     else P &= ~N;
+    cycles += extra_cycle;
 }
 
 void cpu6502::pha(){
@@ -1073,6 +1088,7 @@ void cpu6502::sbc(){
     else if((!(A&0x80))&&(!(value&0x80))&&(result&0x0080)) P |= V;
     else P &= ~V;
     A = result & 0x00FF;
+    cycles += extra_cycle;
 }
 
 void cpu6502::sec(){
