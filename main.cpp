@@ -52,6 +52,10 @@ void drawCPU(cpu6502 & cpu){
     printw("ADDR MODE = %s", cpu.addressing_mode.c_str());
 }
 
+void drawBottomText(){
+    move(38, 0);
+    printw("Press 'q' to quit\nPress 'r' for reset\nPress any other key for instruction step");
+}
 
 int main(){
     cpu6502 cpu = cpu6502();
@@ -59,8 +63,7 @@ int main(){
     std::stringstream ss;
     ss << "A2 0A 8E 00 00 A2 03 8E 01 00 AC 00 00 A9 00 18 6D 01 00 88 D0 FA 8D 02 00 EA EA EA 4C 00 80";
     uint16_t nOffset = 0x8000;
-    while (!ss.eof())
-    {
+    while (!ss.eof()){
 	 std::string b;
 	 ss >> b;
          cpu.write(nOffset++, (uint8_t)std::stoul(b, nullptr, 16));
@@ -72,16 +75,20 @@ int main(){
 
     initscr();
     cbreak();
-//    set_cursor(0);
+    noecho();
+    curs_set(0);
+
     char c=0;
-    while(c!='q'){
+    while(!(c=='q'||c=='Q')){
         clear();
         drawRam(cpu);
         drawPage80(cpu);
         drawCPU(cpu);
+        drawBottomText();
         move(100,80);
         refresh();
         c=getch();
+        if(c=='r') cpu.reset();
         cpu.emulate_cycle();
         cpu.cycles=0;
     }

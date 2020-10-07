@@ -38,6 +38,9 @@ void cpu6502::reset(){
     uint16_t low_byte=read(0xFFFC);
     uint16_t high_byte=read(0xFFFD);
     PC = low_byte + high_byte*256;
+    addressing_mode="";
+    mnemonic="";
+    opcode=0x00;
 }
 
 void cpu6502::irq(){
