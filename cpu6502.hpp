@@ -4,14 +4,15 @@
 #include <vector>
 #include <array>
 #include <string>
-#include <functional>
+
 
 class cpu6502{
 public:
+    cpu6502();
     struct Instruction{
         std::string Mnemonic = "";
-        std::function<void(cpu6502*)>operation;
-        std::function<void(cpu6502*)>addressing_mode;
+        void (cpu6502::*operation)();
+        void (cpu6502::*addressing_mode)();
         uint8_t cycles;
     };
 
@@ -27,6 +28,7 @@ public:
     uint8_t SP=0x00;
     uint16_t PC=0x0200;
     std::string addressing_mode = "";
+    std::string mnemonic ="";
     std::array<uint8_t,64*1024>memory;
 
     //flags
@@ -130,6 +132,7 @@ public:
     //opcode table
     std::vector<Instruction> table;
     void populate_table();
+
 };
 
 

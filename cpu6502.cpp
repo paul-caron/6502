@@ -1,4 +1,9 @@
 #include "cpu6502.hpp"
+#include <iostream>
+
+cpu6502::cpu6502(){
+    populate_table();
+}
 
 uint8_t cpu6502::read(uint16_t address){
     return memory.at(address);
@@ -9,12 +14,14 @@ void cpu6502::write(uint16_t address, uint8_t data){
 }
 
 void cpu6502::emulate_cycle(){
+static int count = 0;
     if(cycles<=0){
         opcode = read(PC++);
         P |= U;
         cycles = table[opcode].cycles;
-        table[opcode].addressing_mode(this);
-        table[opcode].operation(this);
+        (this->*table[opcode].addressing_mode)();
+        mnemonic = table[opcode].Mnemonic;
+        (this->*table[opcode].operation)();
         P |= U;
     }
     --cycles;
@@ -24,7 +31,7 @@ void cpu6502::reset(){
     A=0x00;
     X=0x00;
     Y=0x00;
-    P=0x00;
+    P=0x00 | U;
     SP=0xFD;
     address=0x0000;
     offset=0x00;
