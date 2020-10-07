@@ -1,6 +1,4 @@
 #include "cpu6502.hpp"
-#include <cstdint>
-#include <iostream>
 #include <ncurses.h>
 #include <sstream>
 
