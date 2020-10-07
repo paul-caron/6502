@@ -1,5 +1,4 @@
 #include "cpu6502.hpp"
-#include <iostream>
 
 cpu6502::cpu6502(){
     populate_table();
